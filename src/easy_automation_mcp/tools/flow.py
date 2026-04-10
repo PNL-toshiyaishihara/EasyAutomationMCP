@@ -10,7 +10,7 @@ import yaml
 from pydantic import Field, ValidationError
 
 from .._app import mcp
-from .._state import get_capture_dir, mouse_held, save_screenshot
+from .._state import RecordingSession, get_capture_dir, mouse_held, save_screenshot
 from .flow_schema import AnyStep, FlowDefinition, FlowStep, RepeatStep
 
 
@@ -149,6 +149,8 @@ def execute_flow(
       retry_count: int                    # default: 3  (used when on_error: retry)
       retry_delay: float                  # default: 1.0  seconds between retries
       default_wait: float                 # default: 0.0  seconds to wait after each step
+      record: bool                        # default: false  record the screen during the flow (requires ffmpeg)
+      record_fps: int                     # default: 30  frames per second for the recording
 
     steps:
       - action: <action_name>             # required — see supported actions below
@@ -219,6 +221,14 @@ def execute_flow(
         return {"status": "error", "message": f"Invalid flow definition:\n{e}"}
 
     settings = flow_def.settings
+
+    # --- Start recording (if requested) ---
+    recording: RecordingSession | None = None
+    recording_path: str | None = None
+    recording_error: str | None = None
+    if settings.record:
+        recording = RecordingSession(fps=settings.record_fps)
+        recording.start()
 
     # --- Execute steps ---
     step_results: list[dict[str, Any]] = []
@@ -301,6 +311,13 @@ def execute_flow(
             break
         step_results.append(run_step(step))
 
+    # --- Stop recording ---
+    if recording is not None:
+        try:
+            recording_path = recording.stop()
+        except Exception as e:
+            recording_error = str(e)
+
     if total_failed == 0:
         status = "success"
     elif aborted:
@@ -308,7 +325,7 @@ def execute_flow(
     else:
         status = "partial"
 
-    return {
+    result: dict[str, Any] = {
         "status": status,
         "steps_executed": total_executed,
         "steps_failed": total_failed,
@@ -317,3 +334,8 @@ def execute_flow(
         "captures": captures,
         "step_results": step_results,
     }
+    if recording_path is not None:
+        result["recording_path"] = recording_path
+    if recording_error is not None:
+        result["recording_error"] = recording_error
+    return result

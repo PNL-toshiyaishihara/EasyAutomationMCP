@@ -32,6 +32,12 @@ class FlowSettings(BaseModel):
     default_wait: float = Field(default=0.0, ge=0.0)
     """Seconds to wait after each step completes (unless overridden by wait_after)."""
 
+    record: bool = False
+    """If true, record the screen during the entire flow and save as an MP4 file."""
+
+    record_fps: int = Field(default=30, ge=1)
+    """Frames per second for the recording (default: 30)."""
+
 
 class FlowStep(BaseModel):
     """A single automation action to execute."""
