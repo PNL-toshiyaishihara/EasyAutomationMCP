@@ -104,17 +104,42 @@ steps:
 ### 必要環境
 
 * Python 3.10 以上
+* [uv](https://docs.astral.sh/uv/) (推奨) または pip
 
-### インストール手順
+---
+
+### 方法 1: Wheel ファイルからインストール
+
+[Releases](https://github.com/PNL-toshiyaishihara/EasyAutomationMCP/releases) ページから `.whl` ファイルをダウンロードし、インストールします。
+
+**uv を使う場合（推奨）:**
 
 ```bash
-pip install easy-automation-mcp
+uv pip install easy_automation_mcp-1.0.0-py3-none-any.whl
 ```
 
-または `uv` を使う場合:
+**pip を使う場合:**
 
 ```bash
-uv add easy-automation-mcp
+pip install easy_automation_mcp-1.0.0-py3-none-any.whl
+```
+
+---
+
+### 方法 2: ソースコードからインストール
+
+リポジトリをクローンしてローカルでビルド・インストールします。
+
+```bash
+git clone https://github.com/PNL-toshiyaishihara/EasyAutomationMCP.git
+cd EasyAutomationMCP
+
+# 依存関係のセットアップ
+uv sync
+
+# (オプション) Wheel をビルドして pip インストール
+uv build
+uv pip install dist/easy_automation_mcp-*.whl
 ```
 
 ## Claude Desktop への設定
@@ -124,22 +149,19 @@ uv add easy-automation-mcp
 * **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
 * **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
 
-### 公開パッケージを使う場合
+### Wheel インストール済みの場合
 
 ```json
 {
   "mcpServers": {
     "easy-automation-mcp": {
-      "command": "uvx",
-      "args": [
-        "easy-automation-mcp"
-      ]
+      "command": "easy-automation-mcp"
     }
   }
 }
 ```
 
-### ローカルソースから使う場合
+### ソースコードから実行する場合
 
 ```json
 {
