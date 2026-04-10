@@ -187,6 +187,25 @@ npx @modelcontextprotocol/inspector uv --directory /path/to/EasyAutomationMCP ru
 * `type_text` はプリンタブル ASCII 文字のみ対応しています。日本語などの Unicode 文字はクリップボード経由で貼り付けてください。
 * `hold_mouse_button` で押し続けている間は `click` / `double_click` / `triple_click` が使えません。先に `release_mouse_button` を呼んでください。
 
+## Roadmap
+
+現在のバージョン: v1.0.0（固定座標ベースのGUI自動化 + YAMLフロー実行）
+
+* Unicode/日本語テキスト入力のネイティブ対応
+* YAMLフローの `if` 条件分岐
+* フロー変数の導入
+* 画像マッチングによるクリック
+* OCRによるテキスト認識
+* スクリーンショットの領域指定
+* フロー録画機能（操作を記録して YAML を自動生成）
+* フローライブラリ（フローの保存・呼び出し）
+* ウィンドウ管理
+* 非同期フロー実行
+* ブラウザ自動化の統合
+* スケジュール実行
+
+---
+
 ## ライセンス
 
 MIT License - 詳細は [LICENSE](LICENSE) ファイルを参照してください。
